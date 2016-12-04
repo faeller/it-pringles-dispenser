@@ -1,6 +1,7 @@
 var parameters = defineParameters();
 
 var on = parameters['on'];
+var checkout = parameters['checkout'];
 var product = parameters['product'];
 var duesInEuro = (parameters['dues'] == null) ? null : parseFloat(parameters['dues']).toFixed(2);
 
@@ -75,7 +76,7 @@ $(document).ready(function()
 		return;
 	}
 
-	if(product == null)
+	if(product == null && checkout == null)
 	{
 		jQuery('<h1/>', 
 		{
@@ -119,7 +120,7 @@ $(document).ready(function()
 		return;
 	}
 
-	if(duesInEuro > 0)
+	if(duesInEuro > 0 && checkout == null)
 	{
 		jQuery('<h1/>', {
 			id: 'paymentoption-selection-title',
@@ -164,7 +165,7 @@ $(document).ready(function()
 	}
 
 
-	if(duesInEuro <= 0)
+	if(duesInEuro <= 0 && checkout == null)
 	{
 		jQuery('<h1/>', 
 		{
@@ -177,41 +178,68 @@ $(document).ready(function()
 			id: 'paymentoption-selection-subtitle',
 			text: 'Rückgeld: ' + (duesInEuro * -1).toFixed(2) + '€'
 		}).appendTo('div.container');
-	}
 
-	if(duesInEuro < 0)
-	{
-		$leftToGenerate = duesInEuro * -1;
-		$change = [];
-
-		for(paymentOptionKey in payment_options)
+		if(duesInEuro < 0)
 		{
-			if(paymentOptionKey === "paypal")
-				continue;
+			$leftToGenerate = duesInEuro * -1;
+			$change = [];
 
-			$option = payment_options[paymentOptionKey];
-
-			while($option.value <= $leftToGenerate)
+			for(paymentOptionKey in payment_options)
 			{
-				$change.push($option);
-				$leftToGenerate -= $option.value;
-				$leftToGenerate = $leftToGenerate.toFixed(2);
+				if(paymentOptionKey === "paypal")
+					continue;
+
+				$option = payment_options[paymentOptionKey];
+
+				while($option.value <= $leftToGenerate)
+				{
+					$change.push($option);
+					$leftToGenerate -= $option.value;
+					$leftToGenerate = $leftToGenerate.toFixed(2);
+				}
 			}
+
+			$changeWrapper = jQuery('<div/>', 
+			{
+				class: 'change'
+			}).appendTo('div.container');
+
+			$change.forEach(function($option) 
+			{
+				jQuery('<img/>', 
+				{
+					class: 'paymentoption-image image-responsive',
+					src: $option.relativeImagePath
+				}).appendTo($changeWrapper);
+			});
 		}
 
-		$changeWrapper = jQuery('<div/>', 
+		jQuery('<a/>', {
+			class: 'checkout-button btn btn-success btn-lg',
+			role: "button",
+			text: "Abholen",
+			href: '?on=true&checkout=' + product,
+			title: 'Abholen',
+			rel: 'internal',
+		}).appendTo("div.container");
+	}
+
+	if(checkout != null)
+	{
+		jQuery('<h1/>', 
 		{
-			class: 'change'
+			id: 'paymentoption-selection-title',
+			text: 'Bezahlvorgang Abgeschlossen!'
 		}).appendTo('div.container');
 
-		$change.forEach(function($option) 
+		jQuery('<h2/>', 
 		{
-			jQuery('<img/>', 
-			{
-				class: 'paymentoption-image image-responsive',
-				src: $option.relativeImagePath
-			}).appendTo($changeWrapper);
-		});
+			id: 'paymentoption-selection-subtitle',
+			text: 'Produktausgabe'
+		}).appendTo('div.container');
+
+		jQuery('<img/>', { class: 'output-image img-responsive', src: products[checkout].relativeImagePath
+		}).appendTo("div.container");
 	}
 });
 

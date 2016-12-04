@@ -33,6 +33,18 @@ div.container {
 	text-align: center;
 }
 
+.output-image
+{
+	display: block;
+    margin: 0 auto;
+}
+
+.checkout-button
+{
+	display: block;
+    margin: 15px auto;	
+}
+
 .change 
 {
 	padding: 50px 10px 10px 10px;
