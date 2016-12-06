@@ -240,6 +240,15 @@ $(document).ready(function()
 
 		jQuery('<img/>', { class: 'output-image img-responsive', src: products[checkout].relativeImagePath
 		}).appendTo("div.container");
+		
+		jQuery('<a/>', {
+			class: 'checkout-button btn btn-success btn-lg',
+			role: "button",
+			text: "Neues Produkt kaufen",
+			href: '?',
+			title: 'Neues Produkt kaufen',
+			rel: 'internal',
+		}).appendTo("div.container");
 	}
 });
 
